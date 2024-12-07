@@ -12,8 +12,8 @@ $id_agendamento = intval($_GET['id_agendamento']);
 $stmt = $pdo->prepare('
     SELECT 
         P.nome_pac AS nome_paciente,
-        P.endereco_pac AS endereco,
-        P.telefone_pac AS telefone,
+        P.logra_pac AS endereco,
+        P.tel_pac AS telefone,
         AG.data_agendamento,
         PROC.nome_proced AS nome_procedimento
     FROM 

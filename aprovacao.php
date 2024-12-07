@@ -24,36 +24,117 @@ $agendamentos = $stmt->fetchAll();
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Aprovação de Agendamentos</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            /* Degradê suave de verde */
+            color: #333;
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2.2em;
+            color: #2e7d32;
+            /* Verde escuro */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sutil sombra */
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
             text-align: left;
         }
+
         th {
-            background-color: #eee;
+            background: #2e7d32;
+            /* Verde escuro */
+            color: white;
+            font-weight: bold;
         }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tr:nth-child(odd) {
+            background: #ffffff;
+        }
+
+        tr:hover {
+            background-color: #c8e6c9;
+            /* Destaque suave em verde */
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-atender {
+            display: inline-block;
+            background: #4caf50;
+            /* Verde principal */
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-atender:hover {
+            background: #388e3c;
+            /* Verde mais escuro */
+            transform: scale(1.05);
+            /* Pequeno aumento ao passar o mouse */
+        }
+
+        .status-atendido {
+            color: #9e9e9e;
+            /* Cinza elegante para status atendido */
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+
         .btn-acao {
             padding: 6px 12px;
             text-decoration: none;
             border-radius: 4px;
             color: white;
         }
+
         .btn-aprovar {
             background-color: #28a745;
         }
+
         .btn-aprovar:hover {
             background-color: #218838;
         }
     </style>
 </head>
+
 <body>
     <h1>Aprovação de Agendamentos</h1>
     <table>
@@ -65,16 +146,23 @@ $agendamentos = $stmt->fetchAll();
             <th>Ações</th>
         </tr>
         <?php foreach ($agendamentos as $agendamento): ?>
-        <tr>
-            <td><?= htmlspecialchars($agendamento['nome_paciente']) ?></td>
-            <td><?= date('d/m/Y', strtotime($agendamento['data_agendamento'])) ?></td>
-            <td><?= date('H:i', strtotime($agendamento['data_agendamento'])) ?></td>
-            <td><?= htmlspecialchars($agendamento['nome_procedimento'] ?? 'Procedimento não definido') ?></td>
-            <td>
-                <a href="detalhes.php?id_agendamento=<?= $agendamento['ID_AGENDAMENTO'] ?>" class="btn-acao btn-aprovar">Aprovar</a>
-            </td>
-        </tr>
+            <tr>
+                <td><?= htmlspecialchars($agendamento['nome_paciente']) ?></td>
+                <td><?= date('d/m/Y', strtotime($agendamento['data_agendamento'])) ?></td>
+                <td><?= date('H:i', strtotime($agendamento['data_agendamento'])) ?></td>
+                <td><?= htmlspecialchars($agendamento['nome_procedimento'] ?? 'Procedimento não definido') ?></td>
+                <td>
+                    <?php if ($agendamento['nome_procedimento'] === 'Glicemia em Jejum'): ?>
+                        <a href="aprovar_glicemia.php?id_agendamento=<?= $agendamento['ID_AGENDAMENTO'] ?>" class="btn-acao btn-aprovar">Aprovar Glicemia</a>
+                    <?php elseif ($agendamento['nome_procedimento'] === 'TGO/TGP'): ?>
+                        <a href="aprovar_tgo_tgp.php?id_agendamento=<?= $agendamento['ID_AGENDAMENTO'] ?>" class="btn-acao btn-aprovar">Aprovar TGO/TGP</a>
+                    <?php else: ?>
+                        <a href="aprovar_amostra.php?id_agendamento=<?= $agendamento['ID_AGENDAMENTO'] ?>&nome_procedimento=<?= urlencode($agendamento['nome_procedimento']) ?>" class="btn-acao btn-aprovar">Aprovar</a>
+                    <?php endif; ?>
+                </td>
+            </tr>
         <?php endforeach; ?>
     </table>
 </body>
+
 </html>
